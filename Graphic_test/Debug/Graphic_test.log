@@ -1,0 +1,4 @@
+﻿  Graphic_test.cpp
+D:\Cpp Repos\Graphic_test\Graphic_test\Graphic_test\Graphic_test.cpp(82,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+D:\Cpp Repos\Graphic_test\Graphic_test\Graphic_test\Graphic_test.cpp(83,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+  Graphic_test.vcxproj -> D:\Cpp Repos\Graphic_test\Graphic_test\Debug\Graphic_test.exe
