@@ -3,10 +3,12 @@
 #elif defined(_UNICODE) && !defined(UNICODE)
 #define UNICODE
 #endif
-
+#define WM_LBUTTONUP
 #include <tchar.h>
 #include <windows.h>
-
+#include<iostream>
+using namespace std;
+#include<math.h>
 /*  Declare Windows procedure  */
 LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
 
@@ -75,32 +77,67 @@ int WINAPI WinMain(HINSTANCE hThisInstance,
     return messages.wParam;
 }
 
+void draweight(HDC hdc, int x, int y, int xc, int yc) {
+    SetPixel(hdc, xc + x, yc + y, RGB(250, 1, 1));
+    SetPixel(hdc, xc - x, yc + y, RGB(250, 1, 1));
+    SetPixel(hdc, xc + x, yc - y, RGB(250, 1, 1));
+    SetPixel(hdc, xc - x, yc - y, RGB(250, 1, 1));
+
+    SetPixel(hdc, xc - y, yc + x, RGB(250, 1, 1));
+    SetPixel(hdc, xc + y, yc - x, RGB(250, 1, 1));
+    SetPixel(hdc, xc + y, yc + x, RGB(250, 1, 1));
+    SetPixel(hdc, xc - y, yc - x, RGB(250, 1, 1));
+}
+void midpoint(HDC hdc, int xc, int yc, int r) {
+    int x = 0;
+    int y = r;
+    double d = 1 - r;
+    while (x < y) {
+        if (d <= 0) {
+            d = d + 2 * x + 3;
+            x++;
+        }
+        else {
+            d = d + 2 * (x - y) + 5;
+            x++;
+            y--;
+        }
+        draweight(hdc, x, y, xc, yc);
+    }
+}
+
 void parametricline(HDC hdc, int x1, int y1, int x2, int y2) {
     double dx = x2 - x1;
     double dy = y2 - y1;
     for (double t = 0; t < 1; t += 0.001) {
         int x = x1 + (dx * t);
         int y = y1 + (dy * t);
-        SetPixel(hdc, x, y, RGB(250, 1, 1));
+        SetPixel(hdc, x, y, RGB(1, 1, 1));
     }
-
 }
+
 /*  This function is called by the Windows function DispatchMessage()  */
-int x1, x2, y1, y2;
+int x1, x2, y, y2;
+int rr, x_c, y_c, x_2, y_2;
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     HDC hdc = GetDC(hwnd);
-
     switch (message)                  /* handle the messages */
     {
-    case WM_LBUTTONDBLCLK:
+    case WM_LBUTTONUP:
+        x_c = LOWORD(lParam);
+        y_c = HIWORD(lParam);
         x1 = LOWORD(lParam);
-        y1 = HIWORD(lParam);
+        y = HIWORD(lParam);
         break;
-    case WM_RBUTTONDBLCLK:
+    case WM_RBUTTONUP:
+        x_2 = LOWORD(lParam);
+        y_2 = HIWORD(lParam);
         x2 = LOWORD(lParam);
         y2 = HIWORD(lParam);
-        parametricline(hdc, x1, y1, x2, y2);
+        rr = sqrt(pow((x_2 - x_c), 2) + pow((y_2 - y_c), 2));
+        midpoint(hdc, x_c, y_c, rr);
+        parametricline(hdc, x1, y, x2, y2);
         break;
     case WM_DESTROY:
         PostQuitMessage(0);       /* send a WM_QUIT to the message queue */
