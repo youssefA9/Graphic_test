@@ -1,7 +1,7 @@
 ﻿  Graphic_test.cpp
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\winuser.h(2254,1): warning C4005: 'WM_LBUTTONUP': macro redefinition
 D:\Cpp Repos\Graphic_test\Graphic_test\Graphic_test.cpp(6): message : see previous definition of 'WM_LBUTTONUP'
-D:\Cpp Repos\Graphic_test\Graphic_test\Graphic_test.cpp(113,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-D:\Cpp Repos\Graphic_test\Graphic_test\Graphic_test.cpp(114,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-D:\Cpp Repos\Graphic_test\Graphic_test\Graphic_test.cpp(138,18): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\Cpp Repos\Graphic_test\Graphic_test\Graphic_test.cpp(131,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+D:\Cpp Repos\Graphic_test\Graphic_test\Graphic_test.cpp(132,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+D:\Cpp Repos\Graphic_test\Graphic_test\Graphic_test.cpp(160,18): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
   Graphic_test.vcxproj -> D:\Cpp Repos\Graphic_test\Debug\Graphic_test.exe

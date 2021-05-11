@@ -7,6 +7,7 @@
 #include <tchar.h>
 #include <windows.h>
 #include<iostream>
+#include <vector>
 using namespace std;
 #include<math.h>
 /*  Declare Windows procedure  */
@@ -77,18 +78,35 @@ int WINAPI WinMain(HINSTANCE hThisInstance,
     return messages.wParam;
 }
 
-void draweight(HDC hdc, int x, int y, int xc, int yc) {
-    SetPixel(hdc, xc + x, yc + y, RGB(250, 1, 1));
-    SetPixel(hdc, xc - x, yc + y, RGB(250, 1, 1));
-    SetPixel(hdc, xc + x, yc - y, RGB(250, 1, 1));
-    SetPixel(hdc, xc - x, yc - y, RGB(250, 1, 1));
+//Vector to Store the Radiuses of the circles
 
-    SetPixel(hdc, xc - y, yc + x, RGB(250, 1, 1));
-    SetPixel(hdc, xc + y, yc - x, RGB(250, 1, 1));
-    SetPixel(hdc, xc + y, yc + x, RGB(250, 1, 1));
-    SetPixel(hdc, xc - y, yc - x, RGB(250, 1, 1));
+void draweight(HDC hdc, int x, int y, int xc, int yc,int rgb) {
+    if (rgb == 1) {
+        SetPixel(hdc, xc + x, yc + y, RGB(128, 0, 0));
+        SetPixel(hdc, xc - x, yc + y, RGB(0, 0, 0));
+        SetPixel(hdc, xc + x, yc - y, RGB(0, 128, 0));
+        SetPixel(hdc, xc - x, yc - y, RGB(0, 0, 0));
+
+        SetPixel(hdc, xc - y, yc + x, RGB(0, 0, 0));
+        SetPixel(hdc, xc + y, yc - x, RGB(0, 0, 128));
+        SetPixel(hdc, xc + y, yc + x, RGB(128, 0, 0));
+        SetPixel(hdc, xc - y, yc - x, RGB(128, 0, 0));
+    
+    
+    }
+    else {
+        SetPixel(hdc, xc + x, yc + y, RGB(0, 0, 0));
+        SetPixel(hdc, xc - x, yc + y, RGB(0, 0, 0));
+        SetPixel(hdc, xc + x, yc - y, RGB(0, 0, 0));
+        SetPixel(hdc, xc - x, yc - y, RGB(0, 0, 0));
+
+        SetPixel(hdc, xc - y, yc + x, RGB(0, 0, 0));
+        SetPixel(hdc, xc + y, yc - x, RGB(0, 0, 0));
+        SetPixel(hdc, xc + y, yc + x, RGB(0, 0, 0));
+        SetPixel(hdc, xc - y, yc - x, RGB(0, 0, 0));
+    }
 }
-void midpoint(HDC hdc, int xc, int yc, int r) {
+void midpoint(HDC hdc, int xc, int yc, int r,int RGB) {
     int x = 0;
     int y = r;
     double d = 1 - r;
@@ -102,7 +120,7 @@ void midpoint(HDC hdc, int xc, int yc, int r) {
             x++;
             y--;
         }
-        draweight(hdc, x, y, xc, yc);
+        draweight(hdc, x, y, xc, yc,RGB);
     }
 }
 
@@ -119,8 +137,12 @@ void parametricline(HDC hdc, int x1, int y1, int x2, int y2) {
 /*  This function is called by the Windows function DispatchMessage()  */
 int x1, x2, y, y2;
 int rr, x_c, y_c, x_2, y_2;
+vector<int>radius;
+
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    int smallestR = 0;
+    int largestR = 0;
     HDC hdc = GetDC(hwnd);
     switch (message)                  /* handle the messages */
     {
@@ -129,6 +151,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         y_c = HIWORD(lParam);
         x1 = LOWORD(lParam);
         y = HIWORD(lParam);
+        radius.clear();
         break;
     case WM_RBUTTONUP:
         x_2 = LOWORD(lParam);
@@ -136,8 +159,28 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         x2 = LOWORD(lParam);
         y2 = HIWORD(lParam);
         rr = sqrt(pow((x_2 - x_c), 2) + pow((y_2 - y_c), 2));
-        midpoint(hdc, x_c, y_c, rr);
+        radius.push_back(rr);
+
         parametricline(hdc, x1, y, x2, y2);
+        midpoint(hdc, x_c, y_c, rr,0);
+
+        if (radius.size() > 1) {
+            if (radius[radius.size() - 1] > radius[radius.size() - 2]) {
+                smallestR = radius[radius.size() - 2];
+                largestR = radius[radius.size() - 1];
+            }
+            else {
+                largestR = radius[radius.size() - 2];
+                smallestR = radius[radius.size() - 1];
+            }
+            for (int i = smallestR; i < largestR; i++) {
+                midpoint(hdc, x_c, y_c, i, 1);
+            }
+            radius.erase(radius.begin());
+        }
+        parametricline(hdc, x1, y, x2, y2);
+        
+        
         break;
     case WM_DESTROY:
         PostQuitMessage(0);       /* send a WM_QUIT to the message queue */
